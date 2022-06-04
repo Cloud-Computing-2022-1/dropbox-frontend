@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Login from "./pages/Login/Login"
 import Explorer from "./pages/Explorer/Explorer"
 import Register from "./pages/Register/Register"
+import SearchedExplorer from "./pages/SearchedExplorer/SearchedExplorer"
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/explorer/*" element={<Explorer />} />
+          <Route path="/search" element={<SearchedExplorer />} />
         </Routes>
       </BrowserRouter>
       <Footer />
