@@ -1,32 +1,53 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-
-type File = string
-type Folder = string
+import Modal from "../../components/Modal/Modal"
+import { FileMeta, FolderName } from "../../types/File.d"
 
 interface Path {
-  folders: Folder[]
-  files: File[]
+  folders: FolderName[]
+  files: FileMeta[]
 }
 
 const testPath: Path = {
   folders: ["TestFolder1", "TestFolder2"],
-  files: ["TestFile1", "TestFile2"],
+  files: [
+    {
+      name: "TestFile1",
+      type: "Binary",
+      lastModified: "2022-06-04",
+      tag: "null",
+    },
+    {
+      name: "TestFile2",
+      type: "Binary",
+      lastModified: "2022-06-04",
+      tag: "blue",
+    },
+  ],
 }
 
 const Explorer = () => {
   const location = useLocation()
   const [path, setPath] = useState<Path>({ folders: [], files: [] })
+  const [fileView, setFileView] = useState<FileMeta | null>(null)
+
+  const handleFileView = useCallback(
+    (fileMeta: FileMeta) => {
+      if (!fileView) {
+        setFileView(fileMeta)
+      }
+    },
+    [fileView]
+  )
 
   const currentPath = useCallback(() => {
-    // Manual parsing; /explorer/ <- 9 chars
+    // Manual parsing; /explorer/ <- 10 chars
     return location.pathname.substring(10)
   }, [location.pathname])
 
   useEffect(() => {
     setPath(testPath)
     // If current path is not exists, go to /root folder
-    console.log(currentPath())
   }, [currentPath])
 
   return (
@@ -41,10 +62,21 @@ const Explorer = () => {
         ))}
       </div>
       <div className="FileBox">
-        {path.files.map((v, i) => (
-          <button key={currentPath() + "/" + v}>{v} (File)</button>
+        {path.files.map((fileMeta, i) => (
+          <button
+            key={currentPath() + "/" + fileMeta.name}
+            onClick={() => handleFileView(fileMeta)}
+          >
+            {fileMeta.name} (File)
+          </button>
         ))}
       </div>
+      <Modal isOpened={fileView !== null} close={() => setFileView(null)}>
+        <div className="FileName">{fileView?.name}</div>
+        <div className="FileDate">{fileView?.lastModified}</div>
+        <div className="FileType">{fileView?.type}</div>
+        <div className="FileTag">{fileView?.tag}</div>
+      </Modal>
     </div>
   )
 }
