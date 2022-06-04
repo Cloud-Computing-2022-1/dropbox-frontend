@@ -61,11 +61,8 @@ const Explorer = () => {
         ))}
       </div>
       <div className="FileBox">
-        {path.files.map((fileMeta, i) => (
-          <button
-            key={currentPath() + "/" + fileMeta.name}
-            onClick={() => handleFileView(fileMeta)}
-          >
+        {path.files.map((fileMeta) => (
+          <button key={fileMeta.name} onClick={() => handleFileView(fileMeta)}>
             {fileMeta.name} (File)
           </button>
         ))}

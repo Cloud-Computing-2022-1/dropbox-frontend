@@ -1,12 +1,12 @@
 import React from "react"
 
-interface props {
+interface Props {
   children: React.ReactNode
   close: () => void
   isOpened: boolean
 }
 
-const Modal = ({ children, close, isOpened }: props) => {
+const Modal = ({ children, close, isOpened }: Props) => {
   return (
     <div className={isOpened ? "Modal Opened" : "Modal Closed"}>
       {isOpened ? (
