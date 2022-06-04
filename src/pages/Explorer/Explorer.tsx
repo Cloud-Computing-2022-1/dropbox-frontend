@@ -1,15 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import Modal from "../../components/Modal/Modal"
-import { FileMeta, FolderName } from "../../types/File.d"
+import { FileMeta, PathData } from "../../types/path"
 
-interface Path {
-  folders: FolderName[]
-  files: FileMeta[]
-}
-
-const testPath: Path = {
-  folders: ["TestFolder1", "TestFolder2"],
+const testPath: PathData = {
+  folders: [{ name: "TestFolder1" }, { name: "TestFolder2" }],
   files: [
     {
       name: "TestFile1",
@@ -28,7 +23,7 @@ const testPath: Path = {
 
 const Explorer = () => {
   const location = useLocation()
-  const [path, setPath] = useState<Path>({ folders: [], files: [] })
+  const [path, setPath] = useState<PathData>({ folders: [], files: [] })
   const [fileView, setFileView] = useState<FileMeta | null>(null)
 
   const handleFileView = useCallback(
@@ -55,9 +50,12 @@ const Explorer = () => {
       <header>Header (SearchBar, Userinfo, etc...)</header>
       <div>{currentPath()}</div>
       <div className="FolderBox">
-        {path.folders.map((folderName, i) => (
-          <Link key={folderName} to={currentPath() + "/" + folderName}>
-            {folderName} (Folder)
+        {path.folders.map((folderMeta, i) => (
+          <Link
+            key={folderMeta.name}
+            to={currentPath() + "/" + folderMeta.name}
+          >
+            {folderMeta.name} (Folder)
           </Link>
         ))}
       </div>
