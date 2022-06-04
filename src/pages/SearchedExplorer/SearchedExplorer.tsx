@@ -68,7 +68,7 @@ const SearchedExplorer = () => {
         {path.folders.map((folderMeta) => (
           <Link
             key={folderMeta.name}
-            to={"/explorer/" + folderMeta.path! + folderMeta.name}
+            to={"/explorer/" + folderMeta.path! + "/" + folderMeta.name}
           >
             {folderMeta.name} (Folder)
           </Link>

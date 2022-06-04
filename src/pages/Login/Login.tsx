@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios"
 import { sha256 } from "js-sha256"
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { SERVER_URL } from "../../constants"
 
@@ -19,15 +19,21 @@ const Login = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value)
-  }
+  const handleUsername = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setUsername(e.target.value)
+    },
+    []
+  )
 
-  const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value)
-  }
+  const handlePassword = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value)
+    },
+    []
+  )
 
-  const onClickLogin = () => {
+  const onClickLogin = useCallback(() => {
     const req: LoginRequest = {
       username: username,
       password: sha256(password + sha256(username)),
@@ -44,7 +50,7 @@ const Login = () => {
           console.log(err)
         })
     }
-  }
+  }, [username, password, navigate])
 
   return (
     <div className="LoginBox">

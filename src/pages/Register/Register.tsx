@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios"
 import { sha256 } from "js-sha256"
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import Modal from "../../components/Modal/Modal"
 import { SERVER_URL } from "../../constants"
@@ -23,24 +23,30 @@ const Register = () => {
   const [password, setPassword] = useState("")
   const [isModalOpened, setModalOpened] = useState(false)
 
-  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEmail = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
-  }
+  }, [])
 
-  const handleUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value)
-  }
+  const handleUsername = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setUsername(e.target.value)
+    },
+    []
+  )
 
-  const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value)
-  }
+  const handlePassword = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value)
+    },
+    []
+  )
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setModalOpened(false)
     navigate("/login")
-  }
+  }, [navigate])
 
-  const onClickRegister = () => {
+  const onClickRegister = useCallback(() => {
     const req: RegisterRequest = {
       email: email,
       username: username,
@@ -58,7 +64,7 @@ const Register = () => {
           console.log(err)
         })
     }
-  }
+  }, [email, username, password])
 
   return (
     <div className="RegisterBox">
