@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
+import ExplorerHeader from "../../components/ExplorerHeader/ExplorerHeader"
 import Modal from "../../components/Modal/Modal"
 import { FileMeta, PathData } from "../../types/path"
 
@@ -47,10 +48,10 @@ const Explorer = () => {
 
   return (
     <div>
-      <header>Header (SearchBar, Userinfo, etc...)</header>
+      <ExplorerHeader />
       <div>{currentPath()}</div>
       <div className="FolderBox">
-        {path.folders.map((folderMeta, i) => (
+        {path.folders.map((folderMeta) => (
           <Link
             key={folderMeta.name}
             to={currentPath() + "/" + folderMeta.name}

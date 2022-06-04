@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import ExplorerHeader from "../../components/ExplorerHeader/ExplorerHeader"
 import Modal from "../../components/Modal/Modal"
 import { FileMeta, PathData } from "../../types/path"
 
@@ -31,8 +32,6 @@ const SearchedExplorer = () => {
   const [path, setPath] = useState<PathData>({ folders: [], files: [] })
   const [fileView, setFileView] = useState<FileMeta | null>(null)
 
-  console.log(query)
-
   const handleFileView = useCallback(
     (fileMeta: FileMeta) => {
       if (!fileView) {
@@ -63,7 +62,7 @@ const SearchedExplorer = () => {
 
   return (
     <div>
-      <header>Header (SearchBar, Userinfo, etc...)</header>
+      <ExplorerHeader />
       <div>Search result of '{query}'</div>
       <div className="FolderBox">
         {path.folders.map((folderMeta) => (
