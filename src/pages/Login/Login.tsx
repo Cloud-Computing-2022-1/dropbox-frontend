@@ -1,13 +1,26 @@
+import axios, { AxiosResponse } from "axios"
 import { sha256 } from "js-sha256"
 import React, { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { SERVER_URL } from "../../constants"
+
+interface LoginRequest {
+  username: string
+  password: string
+}
+
+interface LoginResponse {
+  Status: string
+  Username: string
+}
 
 const Login = () => {
-  const [id, setId] = useState("")
+  const navigate = useNavigate()
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleId = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setId(e.target.value)
+  const handleUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value)
   }
 
   const handlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,13 +28,33 @@ const Login = () => {
   }
 
   const onClickLogin = () => {
-    console.log(id, sha256(password + sha256(id)), "are pushed")
+    const req: LoginRequest = {
+      username: username,
+      password: sha256(password + sha256(username)),
+    }
+    if (req.username && req.password) {
+      axios
+        .post(SERVER_URL + "login", req)
+        .then((res: AxiosResponse<LoginResponse>) => {
+          if (res.data.Status === "Success") {
+            navigate("/explorer/root")
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
   }
 
   return (
     <div className="LoginBox">
       <h2>Login</h2>
-      <input type="text" value={id} onChange={handleId} placeholder="ID" />
+      <input
+        type="text"
+        value={username}
+        onChange={handleUsername}
+        placeholder="Username"
+      />
       <input
         type="password"
         value={password}

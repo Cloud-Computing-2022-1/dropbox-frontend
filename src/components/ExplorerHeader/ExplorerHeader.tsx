@@ -1,5 +1,12 @@
+import axios, { AxiosResponse } from "axios"
 import React, { useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { SERVER_URL } from "../../constants"
+
+interface LogoutResponse {
+  Status: string
+  Username: string
+}
 
 const ExplorerHeader = () => {
   const navigate = useNavigate()
@@ -10,8 +17,20 @@ const ExplorerHeader = () => {
   }
 
   const onClickSearch = useCallback(() => {
-    navigate("?q=" + query)
+    if (query !== "") {
+      navigate("/search?q=" + query)
+    }
   }, [query, navigate])
+
+  const onClickLogout = useCallback(() => {
+    axios
+      .post(SERVER_URL + "logout")
+      .then((res: AxiosResponse<LogoutResponse>) => {
+        if (res.data.Status && res.data.Status === "Success") {
+          navigate("/login")
+        }
+      })
+  }, [navigate])
 
   return (
     <header>
@@ -22,6 +41,7 @@ const ExplorerHeader = () => {
         placeholder="Enter a keyword to search"
       />
       <button onClick={onClickSearch}>Search</button>
+      <button onClick={onClickLogout}>Logout</button>
     </header>
   )
 }
