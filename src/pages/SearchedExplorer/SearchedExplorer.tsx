@@ -72,7 +72,7 @@ const SearchedExplorer = () => {
   }, [navigate, searchParams])
 
   useEffect(() => {
-    setPath(testPath)
+    setPath(testPath) // FIXME: remove
     // if (query) {
     //   let pathData: PathData = { folders: [], files: [] }
     //   const reqFolder: SearchFolderWithNameRequest = { keyword: query }
