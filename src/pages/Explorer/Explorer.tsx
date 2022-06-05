@@ -58,9 +58,32 @@ const Explorer = () => {
   }, [location.pathname])
 
   useEffect(() => {
-    setPath(testPath)
-    // If current path is not exists, go to /root folder
-  }, [currentPath])
+    setPath(testPath) // FIXME: remove
+    // let pathData: PathData = { folders: [], files: [] }
+    // const reqFolder: SearchFolderRequest = { file_path: currentPath() }
+    // const reqFile: SearchFileRequest = { name: "", ...reqFolder }
+    // axios
+    //   .post(SERVER_URL + "searchfolderpath", reqFolder)
+    //   .then((res: AxiosResponse<SearchFolderResponse>) => {
+    //     pathData.folders = res.data
+    //   })
+    //   .catch((err) => {
+    //     console.log(err)
+    //     // If current path is not exists, go to /root folder
+    //     navigate("root")
+    //   })
+    // axios
+    //   .post(SERVER_URL + "search", reqFile)
+    //   .then((res: AxiosResponse<SearchFileResponse>) => {
+    //     pathData.files = res.data.result
+    //   })
+    //   .catch((err) => {
+    //     console.log(err)
+    //     // Same above
+    //     navigate("root")
+    //   })
+    // setPath(pathData)
+  }, [currentPath, navigate])
 
   return (
     <div>
