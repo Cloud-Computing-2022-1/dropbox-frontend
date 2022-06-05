@@ -30,6 +30,8 @@ const ExplorerHeader = () => {
           navigate("/login")
         }
       })
+    // logout anyway
+    // navigate("/login")
   }, [navigate])
 
   return (
