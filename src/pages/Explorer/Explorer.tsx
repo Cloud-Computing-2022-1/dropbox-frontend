@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios"
 import React, { useCallback, useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import ExplorerHeader from "../../components/ExplorerHeader/ExplorerHeader"
+import ExplorerToolbar from "../../components/ExplorerToolbar/ExplorerToolbar"
 import Modal from "../../components/Modal/Modal"
 import { SERVER_URL } from "../../constants"
 import {
@@ -57,48 +58,59 @@ const Explorer = () => {
     return location.pathname.substring(10)
   }, [location.pathname])
 
+  const refreshPath = useCallback(() => {
+    let pathData: PathData = { folders: [], files: [] }
+    const reqFolder: SearchFolderRequest = { file_path: currentPath() }
+    const reqFile: SearchFileRequest = { name: "", ...reqFolder }
+    axios
+      .post(SERVER_URL + "searchfolderpath", reqFolder)
+      .then((res: AxiosResponse<SearchFolderResponse>) => {
+        pathData.folders = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+        // If current path is not exists, go to /root folder
+        navigate("root", { replace: true })
+      })
+    axios
+      .post(SERVER_URL + "search", reqFile)
+      .then((res: AxiosResponse<SearchFileResponse>) => {
+        pathData.files = res.data.result
+      })
+      .catch((err) => {
+        console.log(err)
+        // Same above
+        navigate("root", { replace: true })
+      })
+    setPath(pathData)
+  }, [currentPath, navigate])
+
   useEffect(() => {
     setPath(testPath) // FIXME: remove
-    // let pathData: PathData = { folders: [], files: [] }
-    // const reqFolder: SearchFolderRequest = { file_path: currentPath() }
-    // const reqFile: SearchFileRequest = { name: "", ...reqFolder }
-    // axios
-    //   .post(SERVER_URL + "searchfolderpath", reqFolder)
-    //   .then((res: AxiosResponse<SearchFolderResponse>) => {
-    //     pathData.folders = res.data
-    //   })
-    //   .catch((err) => {
-    //     console.log(err)
-    //     // If current path is not exists, go to /root folder
-    //     navigate("root")
-    //   })
-    // axios
-    //   .post(SERVER_URL + "search", reqFile)
-    //   .then((res: AxiosResponse<SearchFileResponse>) => {
-    //     pathData.files = res.data.result
-    //   })
-    //   .catch((err) => {
-    //     console.log(err)
-    //     // Same above
-    //     navigate("root")
-    //   })
-    // setPath(pathData)
-  }, [currentPath, navigate])
+    refreshPath()
+  }, [])
 
   return (
     <div>
       <ExplorerHeader />
+      <ExplorerToolbar currentPath={currentPath()} refresher={refreshPath} />
       <div>{currentPath()}</div>
       <div className="FolderBox">
-        {path.folders.map((folderMeta) => (
-          <Link key={folderMeta} to={currentPath() + "/" + folderMeta}>
+        {path.folders.map((folderMeta, i) => (
+          <Link
+            key={folderMeta + i.toString()}
+            to={currentPath() + "/" + folderMeta}
+          >
             {folderMeta} (Folder)
           </Link>
         ))}
       </div>
       <div className="FileBox">
-        {path.files.map((fileMeta) => (
-          <button key={fileMeta.title} onClick={() => handleFileView(fileMeta)}>
+        {path.files.map((fileMeta, i) => (
+          <button
+            key={fileMeta.title + i.toString()}
+            onClick={() => handleFileView(fileMeta)}
+          >
             {fileMeta.title} (File)
           </button>
         ))}
