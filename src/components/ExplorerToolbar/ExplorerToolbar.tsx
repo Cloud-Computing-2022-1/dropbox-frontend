@@ -69,7 +69,7 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
         })
       setIsUploading(false) // FIXME: remove
     }
-  }, [currentPath])
+  }, [currentPath, refresher])
 
   const onClickCreateFolder = useCallback(() => {
     if (!isCreatingFolder) {
@@ -98,7 +98,7 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
         })
       setIsCreatingFolder(false) // FIXME: remove
     }
-  }, [currentPath, folderName])
+  }, [currentPath, refresher, folderName])
 
   return (
     <div className="Toolbar">
