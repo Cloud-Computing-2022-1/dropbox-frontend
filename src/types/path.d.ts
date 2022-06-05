@@ -1,16 +1,31 @@
 export declare interface FileMeta {
-  name: string
-  type: string
-  lastModified: string
-  tag: string
+  id: number
+  title: string
+  url: string
+  owner: number
+  key: string
+  upload_date: string
+  file_path: string
 }
 
-export declare interface FolderMeta {
-  name: string
-  path?: string
-}
+export declare type FolderMeta = string
 
 export declare interface PathData {
   folders: FolderMeta[]
   files: FileMeta[]
+}
+
+export declare interface SearchFolderRequest {
+  file_path: string
+}
+
+export declare type SearchFolderResponse = string[]
+
+export declare interface SearchFileRequest {
+  file_path: string
+  name: string
+}
+
+export declare interface SearchFileResponse {
+  result: FileMeta[]
 }

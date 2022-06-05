@@ -1,28 +1,44 @@
+import axios, { AxiosResponse } from "axios"
 import React, { useCallback, useEffect, useState } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import ExplorerHeader from "../../components/ExplorerHeader/ExplorerHeader"
 import Modal from "../../components/Modal/Modal"
-import { FileMeta, PathData } from "../../types/path"
+import { SERVER_URL } from "../../constants"
+import {
+  FileMeta,
+  PathData,
+  SearchFileRequest,
+  SearchFileResponse,
+  SearchFolderRequest,
+  SearchFolderResponse,
+} from "../../types/path"
 
 const testPath: PathData = {
-  folders: [{ name: "TestFolder1" }, { name: "TestFolder2" }],
+  folders: ["TestFolder1", "TestFolder2"],
   files: [
     {
-      name: "TestFile1",
-      type: "Binary",
-      lastModified: "2022-06-04",
-      tag: "null",
+      id: 53,
+      title: "forestWatch.jpg",
+      url: "https://dropbox-s3-jeon.s3.ap-northeast-2.amazonaws.com/0b9fac69-fb44-421a-bd9b-42758bd40b3d",
+      owner: 20,
+      key: "0b9fac69-fb44-421a-bd9b-42758bd40b3d",
+      upload_date: "2022-06-05T01:00:46.625080",
+      file_path: "/image/wallpaper/",
     },
     {
-      name: "TestFile2",
-      type: "Binary",
-      lastModified: "2022-06-04",
-      tag: "blue",
+      id: 54,
+      title: "forestWatch.jpg",
+      url: "https://dropbox-s3-jeon.s3.ap-northeast-2.amazonaws.com/6beaa8e4-f3c7-466b-a6d0-eae0f13d40f3",
+      owner: 20,
+      key: "6beaa8e4-f3c7-466b-a6d0-eae0f13d40f3",
+      upload_date: "2022-06-05T01:08:24.487904",
+      file_path: "/image/wallpaper/",
     },
   ],
 }
 
 const Explorer = () => {
+  const navigate = useNavigate()
   const location = useLocation()
   const [path, setPath] = useState<PathData>({ folders: [], files: [] })
   const [fileView, setFileView] = useState<FileMeta | null>(null)
@@ -52,26 +68,22 @@ const Explorer = () => {
       <div>{currentPath()}</div>
       <div className="FolderBox">
         {path.folders.map((folderMeta) => (
-          <Link
-            key={folderMeta.name}
-            to={currentPath() + "/" + folderMeta.name}
-          >
-            {folderMeta.name} (Folder)
+          <Link key={folderMeta} to={currentPath() + "/" + folderMeta}>
+            {folderMeta} (Folder)
           </Link>
         ))}
       </div>
       <div className="FileBox">
         {path.files.map((fileMeta) => (
-          <button key={fileMeta.name} onClick={() => handleFileView(fileMeta)}>
-            {fileMeta.name} (File)
+          <button key={fileMeta.title} onClick={() => handleFileView(fileMeta)}>
+            {fileMeta.title} (File)
           </button>
         ))}
       </div>
       <Modal isOpened={fileView !== null} close={() => setFileView(null)}>
-        <div className="FileName">{fileView?.name}</div>
-        <div className="FileDate">{fileView?.lastModified}</div>
-        <div className="FileType">{fileView?.type}</div>
-        <div className="FileTag">{fileView?.tag}</div>
+        <div className="FileName">{fileView?.title}</div>
+        <div className="FileDate">{fileView?.upload_date}</div>
+        <div className="FileUrl">{fileView?.url}</div>
       </Modal>
     </div>
   )
