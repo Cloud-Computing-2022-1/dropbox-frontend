@@ -1,8 +1,17 @@
+import axios, { AxiosResponse } from "axios"
 import React, { useCallback, useEffect, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import ExplorerHeader from "../../components/ExplorerHeader/ExplorerHeader"
 import Modal from "../../components/Modal/Modal"
-import { FileMeta, PathData } from "../../types/path"
+import { SERVER_URL } from "../../constants"
+import {
+  FileMeta,
+  PathData,
+  SearchFileRequest,
+  SearchFileResponse,
+  SearchFolderWithNameRequest,
+  SearchFolderWithNameResponse,
+} from "../../types/path"
 
 const testPath: PathData = {
   folders: ["/root/Test1/TestFolder1", "/root/Test2"],
@@ -59,9 +68,34 @@ const SearchedExplorer = () => {
       navigate("/explorer/root", { replace: true })
     }
     // Some logic
-    setPath(testPath)
     setQuery(newQuery)
   }, [navigate, searchParams])
+
+  useEffect(() => {
+    setPath(testPath)
+    // if (query) {
+    //   let pathData: PathData = { folders: [], files: [] }
+    //   const reqFolder: SearchFolderWithNameRequest = { keyword: query }
+    //   const reqFile: SearchFileRequest = { name: query, file_path: "" }
+    //   axios
+    //     .post(SERVER_URL + "searchfolderpath", reqFolder)
+    //     .then((res: AxiosResponse<SearchFolderWithNameResponse>) => {
+    //       pathData.folders = res.data.result
+    //     })
+    //     .catch((err) => {
+    //       console.log(err)
+    //     })
+    //   axios
+    //     .post(SERVER_URL + "search", reqFile)
+    //     .then((res: AxiosResponse<SearchFileResponse>) => {
+    //       pathData.files = res.data.result
+    //     })
+    //     .catch((err) => {
+    //       console.log(err)
+    //     })
+    //   setPath(pathData)
+    // }
+  }, [query])
 
   return (
     <div>
@@ -69,7 +103,7 @@ const SearchedExplorer = () => {
       <div>Search result of '{query}'</div>
       <div className="FolderBox">
         {path.folders.map((folderMeta) => (
-          <Link key={folderMeta} to={"/explorer/" + folderMeta}>
+          <Link key={folderMeta} to={"/explorer" + folderMeta}>
             {folderMeta}
           </Link>
         ))}
