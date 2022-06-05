@@ -34,6 +34,7 @@ const ExplorerHeader = () => {
 
   return (
     <header>
+      <button onClick={() => navigate(-1)}>← Back</button>
       <input
         type="text"
         value={query}
