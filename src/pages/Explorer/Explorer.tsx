@@ -66,6 +66,7 @@ const Explorer = () => {
       .post(SERVER_URL + "searchfolderpath", reqFolder)
       .then((res: AxiosResponse<SearchFolderResponse>) => {
         pathData.folders = res.data
+        setPath(pathData)
       })
       .catch((err) => {
         console.log(err)
@@ -76,19 +77,19 @@ const Explorer = () => {
       .post(SERVER_URL + "search", reqFile)
       .then((res: AxiosResponse<SearchFileResponse>) => {
         pathData.files = res.data.result
+        setPath(pathData)
       })
       .catch((err) => {
         console.log(err)
         // Same above
         navigate("root", { replace: true })
       })
-    setPath(pathData)
   }, [currentPath, navigate])
 
   useEffect(() => {
     setPath(testPath) // FIXME: remove
     refreshPath()
-  }, [])
+  }, [refreshPath])
 
   return (
     <div>

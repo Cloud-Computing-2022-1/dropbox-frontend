@@ -73,28 +73,29 @@ const SearchedExplorer = () => {
 
   useEffect(() => {
     setPath(testPath) // FIXME: remove
-    // if (query) {
-    //   let pathData: PathData = { folders: [], files: [] }
-    //   const reqFolder: SearchFolderWithNameRequest = { keyword: query }
-    //   const reqFile: SearchFileRequest = { name: query, file_path: "" }
-    //   axios
-    //     .post(SERVER_URL + "searchfolderpath", reqFolder)
-    //     .then((res: AxiosResponse<SearchFolderWithNameResponse>) => {
-    //       pathData.folders = res.data.result
-    //     })
-    //     .catch((err) => {
-    //       console.log(err)
-    //     })
-    //   axios
-    //     .post(SERVER_URL + "search", reqFile)
-    //     .then((res: AxiosResponse<SearchFileResponse>) => {
-    //       pathData.files = res.data.result
-    //     })
-    //     .catch((err) => {
-    //       console.log(err)
-    //     })
-    //   setPath(pathData)
-    // }
+    if (query) {
+      let pathData: PathData = { folders: [], files: [] }
+      const reqFolder: SearchFolderWithNameRequest = { keyword: query }
+      const reqFile: SearchFileRequest = { name: query, file_path: "" }
+      axios
+        .post(SERVER_URL + "searchfolderpath", reqFolder)
+        .then((res: AxiosResponse<SearchFolderWithNameResponse>) => {
+          pathData.folders = res.data.result
+          setPath(pathData)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      axios
+        .post(SERVER_URL + "search", reqFile)
+        .then((res: AxiosResponse<SearchFileResponse>) => {
+          pathData.files = res.data.result
+          setPath(pathData)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
   }, [query])
 
   return (
