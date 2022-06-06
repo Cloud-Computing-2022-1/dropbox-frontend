@@ -40,9 +40,13 @@ const Login = () => {
     if (req.username && req.password) {
       axios
         .post("login", req)
-        .then((res: AxiosResponse<LoginResponse>) => {
-          if (res.data.Status === "Success") {
-            navigate("/explorer/root")
+        .then((res: AxiosResponse<LoginResponse | string>) => {
+          if (typeof res.data === "string") {
+            if (res.data === "이미 로그인된 상태입니다.") {
+              navigate("/explorer/")
+            }
+          } else if (res.data.Status === "Success") {
+            navigate("/explorer/")
           }
         })
         .catch((err) => {
