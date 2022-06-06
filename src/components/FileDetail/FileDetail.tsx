@@ -39,7 +39,6 @@ const FileDetail = ({ file, refresher }: Props) => {
             setShareUrl(res.data.url)
           }
         })
-      setShareUrl("https://test.com") // FIXME: remove
     }
   }, [duration, file])
 

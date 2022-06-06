@@ -98,7 +98,6 @@ const SearchedExplorer = () => {
   }, [query])
 
   useEffect(() => {
-    setPath(testPath) // FIXME: remove
     refreshPath()
   }, [refreshPath])
 

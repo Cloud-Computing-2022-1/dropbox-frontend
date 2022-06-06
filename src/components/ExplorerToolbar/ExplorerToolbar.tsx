@@ -72,7 +72,6 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
         .catch((err) => {
           console.log(err)
         })
-      setIsUploading(false) // FIXME: remove
     }
   }, [currentPath, refresher])
 
@@ -101,7 +100,6 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
         .catch((err) => {
           console.log(err)
         })
-      setIsCreatingFolder(false) // FIXME: remove
     }
   }, [currentPath, refresher, folderName])
 

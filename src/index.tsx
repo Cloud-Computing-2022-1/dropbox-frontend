@@ -4,10 +4,15 @@ import "./index.css"
 import App from "./App"
 import reportWebVitals from "./reportWebVitals"
 import axios from "axios"
-import { SERVER_URL } from "./constants"
 
 axios.defaults.withCredentials = true
-axios.defaults.baseURL = SERVER_URL
+axios.defaults.baseURL = "localhost:8000/"
+axios.interceptors.request.use((config) => {
+  if (config.url && config.url[config.url.length - 1] !== "/") {
+    config.url += "/"
+  }
+  return config
+})
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(

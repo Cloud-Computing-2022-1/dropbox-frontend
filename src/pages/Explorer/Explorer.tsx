@@ -14,30 +14,6 @@ import {
   SearchFolderResponse,
 } from "../../types/path"
 
-const testPath: PathData = {
-  folders: ["TestFolder1", "TestFolder2"],
-  files: [
-    {
-      id: 53,
-      title: "forestWatch.jpg",
-      url: "https://dropbox-s3-jeon.s3.ap-northeast-2.amazonaws.com/0b9fac69-fb44-421a-bd9b-42758bd40b3d",
-      owner: 20,
-      key: "0b9fac69-fb44-421a-bd9b-42758bd40b3d",
-      upload_date: "2022-06-05T01:00:46.625080",
-      file_path: "/image/wallpaper/",
-    },
-    {
-      id: 54,
-      title: "forestWatch.jpg",
-      url: "https://dropbox-s3-jeon.s3.ap-northeast-2.amazonaws.com/6beaa8e4-f3c7-466b-a6d0-eae0f13d40f3",
-      owner: 20,
-      key: "6beaa8e4-f3c7-466b-a6d0-eae0f13d40f3",
-      upload_date: "2022-06-05T01:08:24.487904",
-      file_path: "/image/wallpaper/",
-    },
-  ],
-}
-
 const Explorer = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -97,7 +73,6 @@ const Explorer = () => {
   }, [currentPath, navigate])
 
   useEffect(() => {
-    setPath(testPath) // FIXME: remove
     refreshPath()
   }, [refreshPath])
 
