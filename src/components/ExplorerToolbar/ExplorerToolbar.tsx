@@ -4,10 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { FileMeta } from "../../types/path"
 import Modal from "../Modal/Modal"
 
-interface UploadRequest {
-  files: FileList
-  file_path: string
-}
+type UploadRequest = FormData
 
 interface UploadResponse {
   uploaded_file_list: FileMeta[]
@@ -55,14 +52,22 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
 
   const onClickSubmitUpload = useCallback(() => {
     if (fileInputRef.current?.files && fileInputRef.current.files.length > 0) {
-      const req: UploadRequest = {
-        files: fileInputRef.current.files,
-        file_path: currentPath,
+      const req: UploadRequest = new FormData()
+      for (let i = 0; i < fileInputRef.current.files.length; i += 1) {
+        req.append("files", fileInputRef.current.files[i])
       }
+      req.append("file_path", currentPath)
       axios
-        .post("files", req)
+        .post("files", req, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
         .then((res: AxiosResponse<UploadResponse>) => {
-          if (!res.data.uploaded_file_list) {
+          if (
+            !res.data.uploaded_file_list ||
+            res.data.uploaded_file_list.length === 0
+          ) {
             console.log("uploading error occurs!")
           } else {
             refresher()
