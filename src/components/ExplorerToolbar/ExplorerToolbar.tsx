@@ -96,7 +96,7 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
         .post("folders", req)
         .then((res: AxiosResponse<CreateFolderResponse>) => {
           if (!res.data?.id) {
-            console.log("uploading error occurs!")
+            console.log("creating error occurs!")
           } else {
             refresher()
             setIsCreatingFolder(false)
@@ -115,12 +115,13 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
         .post("deletefolders", req)
         .then(() => {
           navigate(-1)
+          refresher()
         })
         .catch((err) => {
           console.log(err)
         })
     }
-  }, [currentPath, navigate])
+  }, [currentPath, navigate, refresher])
 
   return (
     <div className="Toolbar">

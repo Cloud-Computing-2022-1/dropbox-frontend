@@ -33,7 +33,12 @@ const FileDetail = ({ file, refresher }: Props) => {
   const onClickShare = useCallback(() => {
     if (file) {
       axios
-        .get(file.id.toString() + "/share/" + (duration * 60 * 60).toString())
+        .get(
+          "files/" +
+            file.id.toString() +
+            "/share/" +
+            (duration * 60 * 60).toString()
+        )
         .then((res: AxiosResponse<ShareResponse>) => {
           if (res.data.url) {
             setShareUrl(res.data.url)

@@ -30,10 +30,6 @@ export declare interface SearchFileResponse {
   result: FileMeta[]
 }
 
-export declare interface SearchFolderWithNameRequest {
-  keyword: string
-}
-
 export declare interface SearchFolderWithNameResponse {
   result: FolderMeta[]
 }
