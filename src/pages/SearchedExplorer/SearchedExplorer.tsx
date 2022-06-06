@@ -4,38 +4,14 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import ExplorerHeader from "../../components/ExplorerHeader/ExplorerHeader"
 import FileDetail from "../../components/FileDetail/FileDetail"
 import Modal from "../../components/Modal/Modal"
+import useInterval from "../../hooks/useInterval"
 import {
   FileMeta,
   PathData,
   SearchFileRequest,
   SearchFileResponse,
-  SearchFolderWithNameRequest,
   SearchFolderWithNameResponse,
 } from "../../types/path"
-
-const testPath: PathData = {
-  folders: ["/root/Test1/TestFolder1", "/root/Test2"],
-  files: [
-    {
-      id: 53,
-      title: "forestWatch.jpg",
-      url: "https://dropbox-s3-jeon.s3.ap-northeast-2.amazonaws.com/0b9fac69-fb44-421a-bd9b-42758bd40b3d",
-      owner: 20,
-      key: "0b9fac69-fb44-421a-bd9b-42758bd40b3d",
-      upload_date: "2022-06-05T01:00:46.625080",
-      file_path: "/image/wallpaper/",
-    },
-    {
-      id: 54,
-      title: "forestWatch.jpg",
-      url: "https://dropbox-s3-jeon.s3.ap-northeast-2.amazonaws.com/6beaa8e4-f3c7-466b-a6d0-eae0f13d40f3",
-      owner: 20,
-      key: "6beaa8e4-f3c7-466b-a6d0-eae0f13d40f3",
-      upload_date: "2022-06-05T01:08:24.487904",
-      file_path: "/image/wallpaper/",
-    },
-  ],
-}
 
 const SearchedExplorer = () => {
   const navigate = useNavigate()
@@ -73,23 +49,33 @@ const SearchedExplorer = () => {
 
   const refreshPath = useCallback(() => {
     if (query) {
-      let pathData: PathData = { folders: [], files: [] }
-      const reqFolder: SearchFolderWithNameRequest = { keyword: query }
       const reqFile: SearchFileRequest = { name: query, file_path: "" }
       axios
-        .post("searchfolderpath", reqFolder)
-        .then((res: AxiosResponse<SearchFolderWithNameResponse>) => {
-          pathData.folders = res.data.result
-          setPath(pathData)
+        .get("folders/search/" + query.toString())
+        .then((res: AxiosResponse<SearchFolderWithNameResponse | string>) => {
+          if (typeof res.data !== "string") {
+            setPath((pathData) => {
+              return {
+                ...pathData,
+                folders: (res.data as SearchFolderWithNameResponse).result,
+              }
+            })
+          }
         })
         .catch((err) => {
           console.log(err)
         })
       axios
         .post("search", reqFile)
-        .then((res: AxiosResponse<SearchFileResponse>) => {
-          pathData.files = res.data.result
-          setPath(pathData)
+        .then((res: AxiosResponse<SearchFileResponse | string>) => {
+          if (typeof res.data !== "string") {
+            setPath((pathData) => {
+              return {
+                ...pathData,
+                files: (res.data as SearchFileResponse).result,
+              }
+            })
+          }
         })
         .catch((err) => {
           console.log(err)
@@ -97,24 +83,27 @@ const SearchedExplorer = () => {
     }
   }, [query])
 
-  useEffect(() => {
-    refreshPath()
-  }, [refreshPath])
+  useEffect(refreshPath, [refreshPath])
+
+  useInterval(refreshPath, 3000)
 
   return (
     <div>
       <ExplorerHeader />
       <div>Search result of '{query}'</div>
       <div className="FolderBox">
-        {path.folders.map((folderMeta) => (
-          <Link key={folderMeta} to={"/explorer" + folderMeta}>
+        {path.folders.map((folderMeta, i) => (
+          <Link key={folderMeta + i.toString()} to={"/explorer" + folderMeta}>
             {folderMeta}
           </Link>
         ))}
       </div>
       <div className="FileBox">
-        {path.files.map((fileMeta) => (
-          <button key={fileMeta.title} onClick={() => handleFileView(fileMeta)}>
+        {path.files.map((fileMeta, i) => (
+          <button
+            key={fileMeta.title + i.toString()}
+            onClick={() => handleFileView(fileMeta)}
+          >
             {fileMeta.title}
           </button>
         ))}

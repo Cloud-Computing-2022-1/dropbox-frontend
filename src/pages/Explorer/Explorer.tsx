@@ -5,6 +5,7 @@ import ExplorerHeader from "../../components/ExplorerHeader/ExplorerHeader"
 import ExplorerToolbar from "../../components/ExplorerToolbar/ExplorerToolbar"
 import FileDetail from "../../components/FileDetail/FileDetail"
 import Modal from "../../components/Modal/Modal"
+import useInterval from "../../hooks/useInterval"
 import {
   FileMeta,
   PathData,
@@ -45,14 +46,16 @@ const Explorer = () => {
       return
     }
 
-    let pathData: PathData = { folders: [], files: [] }
     const reqFolder: SearchFolderRequest = { file_path: currentPath() }
     const reqFile: SearchFileRequest = { name: "", ...reqFolder }
     axios
       .post("searchfolderpath", reqFolder)
-      .then((res: AxiosResponse<SearchFolderResponse>) => {
-        pathData.folders = res.data
-        setPath(pathData)
+      .then((res: AxiosResponse<SearchFolderResponse | string>) => {
+        if (typeof res.data !== "string") {
+          setPath((pathData) => {
+            return { ...pathData, folders: res.data as SearchFolderResponse }
+          })
+        }
       })
       .catch((err) => {
         console.log(err)
@@ -61,9 +64,15 @@ const Explorer = () => {
       })
     axios
       .post("search", reqFile)
-      .then((res: AxiosResponse<SearchFileResponse>) => {
-        pathData.files = res.data.result
-        setPath(pathData)
+      .then((res: AxiosResponse<SearchFileResponse | string>) => {
+        if (typeof res.data !== "string") {
+          setPath((pathData) => {
+            return {
+              ...pathData,
+              files: (res.data as SearchFileResponse).result,
+            }
+          })
+        }
       })
       .catch((err) => {
         console.log(err)
@@ -72,9 +81,9 @@ const Explorer = () => {
       })
   }, [currentPath, navigate])
 
-  useEffect(() => {
-    refreshPath()
-  }, [refreshPath])
+  useEffect(refreshPath, [refreshPath])
+
+  useInterval(refreshPath, 3000)
 
   return (
     <div>
@@ -82,22 +91,24 @@ const Explorer = () => {
       <ExplorerToolbar currentPath={currentPath()} refresher={refreshPath} />
       <div>{currentPath()}</div>
       <div className="FolderBox">
+        <div>Folders</div>
         {path.folders.map((folderMeta, i) => (
           <Link
             key={folderMeta + i.toString()}
             to={"/explorer" + currentPath() + folderMeta + "/"}
           >
-            {folderMeta} (Folder)
+            {folderMeta}
           </Link>
         ))}
       </div>
       <div className="FileBox">
+        <div>Files</div>
         {path.files.map((fileMeta, i) => (
           <button
             key={fileMeta.title + i.toString()}
             onClick={() => handleFileView(fileMeta)}
           >
-            {fileMeta.title} (File)
+            {fileMeta.title}
           </button>
         ))}
       </div>
