@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios"
 import React, { useCallback, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { SERVER_URL } from "../../constants"
 import { FileMeta } from "../../types/path"
 import Modal from "../Modal/Modal"
 
@@ -61,7 +60,7 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
         file_path: currentPath,
       }
       axios
-        .post(SERVER_URL + "files", req)
+        .post("files", req)
         .then((res: AxiosResponse<UploadResponse>) => {
           if (!res.data.uploaded_file_list) {
             console.log("uploading error occurs!")
@@ -90,7 +89,7 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
         name: folderName,
       }
       axios
-        .post(SERVER_URL + "folders", req)
+        .post("folders", req)
         .then((res: AxiosResponse<CreateFolderResponse>) => {
           if (!res.data?.id) {
             console.log("uploading error occurs!")
@@ -110,7 +109,7 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
     if (currentPath !== "/") {
       const req: RemoveFolderRequest = { file_path: currentPath }
       axios
-        .post(SERVER_URL + "deletefolders", req)
+        .post("deletefolders", req)
         .then(() => {
           navigate(-1)
         })

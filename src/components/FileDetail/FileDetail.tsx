@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios"
 import React, { useCallback, useState } from "react"
-import { SERVER_URL } from "../../constants"
 import { FileMeta } from "../../types/path"
 
 interface ShareResponse {
@@ -34,12 +33,7 @@ const FileDetail = ({ file, refresher }: Props) => {
   const onClickShare = useCallback(() => {
     if (file) {
       axios
-        .get(
-          SERVER_URL +
-            file.id.toString() +
-            "/share/" +
-            (duration * 60 * 60).toString()
-        )
+        .get(file.id.toString() + "/share/" + (duration * 60 * 60).toString())
         .then((res: AxiosResponse<ShareResponse>) => {
           if (res.data.url) {
             setShareUrl(res.data.url)
@@ -51,7 +45,7 @@ const FileDetail = ({ file, refresher }: Props) => {
 
   const onClickRemove = useCallback(() => {
     if (file) {
-      axios.delete(SERVER_URL + file.id.toString()).then(() => {
+      axios.delete(file.id.toString()).then(() => {
         refresher()
       })
     }

@@ -4,7 +4,6 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import ExplorerHeader from "../../components/ExplorerHeader/ExplorerHeader"
 import FileDetail from "../../components/FileDetail/FileDetail"
 import Modal from "../../components/Modal/Modal"
-import { SERVER_URL } from "../../constants"
 import {
   FileMeta,
   PathData,
@@ -78,7 +77,7 @@ const SearchedExplorer = () => {
       const reqFolder: SearchFolderWithNameRequest = { keyword: query }
       const reqFile: SearchFileRequest = { name: query, file_path: "" }
       axios
-        .post(SERVER_URL + "searchfolderpath", reqFolder)
+        .post("searchfolderpath", reqFolder)
         .then((res: AxiosResponse<SearchFolderWithNameResponse>) => {
           pathData.folders = res.data.result
           setPath(pathData)
@@ -87,7 +86,7 @@ const SearchedExplorer = () => {
           console.log(err)
         })
       axios
-        .post(SERVER_URL + "search", reqFile)
+        .post("search", reqFile)
         .then((res: AxiosResponse<SearchFileResponse>) => {
           pathData.files = res.data.result
           setPath(pathData)

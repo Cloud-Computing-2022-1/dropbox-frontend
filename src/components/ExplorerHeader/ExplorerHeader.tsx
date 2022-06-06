@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios"
 import React, { useCallback, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { SERVER_URL } from "../../constants"
 
 interface LogoutResponse {
   Status: string
@@ -23,13 +22,11 @@ const ExplorerHeader = () => {
   }, [query, navigate])
 
   const onClickLogout = useCallback(() => {
-    axios
-      .post(SERVER_URL + "logout")
-      .then((res: AxiosResponse<LogoutResponse>) => {
-        if (res.data.Status && res.data.Status === "Success") {
-          navigate("/login")
-        }
-      })
+    axios.post("logout").then((res: AxiosResponse<LogoutResponse>) => {
+      if (res.data.Status && res.data.Status === "Success") {
+        navigate("/login")
+      }
+    })
     // logout anyway
     // navigate("/login")
   }, [navigate])

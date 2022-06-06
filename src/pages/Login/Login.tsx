@@ -2,7 +2,6 @@ import axios, { AxiosResponse } from "axios"
 import { sha256 } from "js-sha256"
 import React, { useCallback, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { SERVER_URL } from "../../constants"
 
 interface LoginRequest {
   username: string
@@ -40,7 +39,7 @@ const Login = () => {
     }
     if (req.username && req.password) {
       axios
-        .post(SERVER_URL + "login", req)
+        .post("login", req)
         .then((res: AxiosResponse<LoginResponse>) => {
           if (res.data.Status === "Success") {
             navigate("/explorer/root")

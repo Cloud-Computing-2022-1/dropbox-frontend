@@ -5,7 +5,6 @@ import ExplorerHeader from "../../components/ExplorerHeader/ExplorerHeader"
 import ExplorerToolbar from "../../components/ExplorerToolbar/ExplorerToolbar"
 import FileDetail from "../../components/FileDetail/FileDetail"
 import Modal from "../../components/Modal/Modal"
-import { SERVER_URL } from "../../constants"
 import {
   FileMeta,
   PathData,
@@ -74,7 +73,7 @@ const Explorer = () => {
     const reqFolder: SearchFolderRequest = { file_path: currentPath() }
     const reqFile: SearchFileRequest = { name: "", ...reqFolder }
     axios
-      .post(SERVER_URL + "searchfolderpath", reqFolder)
+      .post("searchfolderpath", reqFolder)
       .then((res: AxiosResponse<SearchFolderResponse>) => {
         pathData.folders = res.data
         setPath(pathData)
@@ -85,7 +84,7 @@ const Explorer = () => {
         navigate("/explorer/", { replace: true })
       })
     axios
-      .post(SERVER_URL + "search", reqFile)
+      .post("search", reqFile)
       .then((res: AxiosResponse<SearchFileResponse>) => {
         pathData.files = res.data.result
         setPath(pathData)

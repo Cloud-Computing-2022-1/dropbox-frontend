@@ -3,7 +3,6 @@ import { sha256 } from "js-sha256"
 import React, { useCallback, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import Modal from "../../components/Modal/Modal"
-import { SERVER_URL } from "../../constants"
 
 interface RegisterRequest {
   username: string
@@ -54,7 +53,7 @@ const Register = () => {
     }
     if (req.username && req.password) {
       axios
-        .post(SERVER_URL + "user", req)
+        .post("user", req)
         .then((res: AxiosResponse<RegisterResponse>) => {
           if (res.data.Status === "Success") {
             setModalOpened(true)
