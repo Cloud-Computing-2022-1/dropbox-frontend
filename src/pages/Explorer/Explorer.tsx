@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import ExplorerHeader from "../../components/ExplorerHeader/ExplorerHeader"
 import ExplorerToolbar from "../../components/ExplorerToolbar/ExplorerToolbar"
+import FileDetail from "../../components/FileDetail/FileDetail"
 import Modal from "../../components/Modal/Modal"
 import { SERVER_URL } from "../../constants"
 import {
@@ -117,9 +118,7 @@ const Explorer = () => {
         ))}
       </div>
       <Modal isOpened={fileView !== null} close={() => setFileView(null)}>
-        <div className="FileName">{fileView?.title}</div>
-        <div className="FileDate">{fileView?.upload_date}</div>
-        <div className="FileUrl">{fileView?.url}</div>
+        <FileDetail file={fileView} refresher={refreshPath} />
       </Modal>
     </div>
   )

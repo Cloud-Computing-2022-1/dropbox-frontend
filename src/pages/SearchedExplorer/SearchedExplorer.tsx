@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios"
 import React, { useCallback, useEffect, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import ExplorerHeader from "../../components/ExplorerHeader/ExplorerHeader"
+import FileDetail from "../../components/FileDetail/FileDetail"
 import Modal from "../../components/Modal/Modal"
 import { SERVER_URL } from "../../constants"
 import {
@@ -71,8 +72,7 @@ const SearchedExplorer = () => {
     setQuery(newQuery)
   }, [navigate, searchParams])
 
-  useEffect(() => {
-    setPath(testPath) // FIXME: remove
+  const refreshPath = useCallback(() => {
     if (query) {
       let pathData: PathData = { folders: [], files: [] }
       const reqFolder: SearchFolderWithNameRequest = { keyword: query }
@@ -98,6 +98,11 @@ const SearchedExplorer = () => {
     }
   }, [query])
 
+  useEffect(() => {
+    setPath(testPath) // FIXME: remove
+    refreshPath()
+  }, [refreshPath])
+
   return (
     <div>
       <ExplorerHeader />
@@ -117,9 +122,7 @@ const SearchedExplorer = () => {
         ))}
       </div>
       <Modal isOpened={fileView !== null} close={() => setFileView(null)}>
-        <div className="FileName">{fileView?.title}</div>
-        <div className="FileDate">{fileView?.upload_date}</div>
-        <div className="FileUrl">{fileView?.url}</div>
+        <FileDetail file={fileView} refresher={refreshPath} />
       </Modal>
     </div>
   )
