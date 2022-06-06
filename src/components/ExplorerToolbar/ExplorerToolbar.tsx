@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios"
 import React, { useCallback, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { SERVER_URL } from "../../constants"
 import { FileMeta } from "../../types/path"
 import Modal from "../Modal/Modal"
@@ -24,12 +25,17 @@ interface CreateFolderResponse {
   tree: object
 }
 
+interface RemoveFolderRequest {
+  file_path: string
+}
+
 interface Props {
   currentPath: string
   refresher: () => void
 }
 
 const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
+  const navigate = useNavigate()
   const [isUploading, setIsUploading] = useState(false)
   const [isCreatingFolder, setIsCreatingFolder] = useState(false)
   const [folderName, setFolderName] = useState("")
@@ -100,10 +106,25 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
     }
   }, [currentPath, refresher, folderName])
 
+  const onClickRemoveFolder = useCallback(() => {
+    if (currentPath !== "/") {
+      const req: RemoveFolderRequest = { file_path: currentPath }
+      axios
+        .post(SERVER_URL + "deletefolders", req)
+        .then(() => {
+          navigate(-1)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
+  }, [currentPath, navigate])
+
   return (
     <div className="Toolbar">
       <button onClick={onClickUpload}>Upload File</button>
       <button onClick={onClickCreateFolder}>New Folder</button>
+      <button onClick={onClickRemoveFolder}>Remove Current Folder</button>
       <Modal isOpened={isUploading} close={() => setIsUploading(false)}>
         <input type="file" ref={fileInputRef} multiple />
         <button onClick={onClickSubmitUpload}>Submit</button>
