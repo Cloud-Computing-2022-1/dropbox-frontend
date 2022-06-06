@@ -6,7 +6,9 @@ import reportWebVitals from "./reportWebVitals"
 import axios from "axios"
 
 axios.defaults.withCredentials = true
-axios.defaults.baseURL = "localhost:8000/"
+axios.defaults.xsrfCookieName = "csrftoken"
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+axios.defaults.baseURL = "http://localhost:8000/"
 axios.interceptors.request.use((config) => {
   if (config.url && config.url[config.url.length - 1] !== "/") {
     config.url += "/"
