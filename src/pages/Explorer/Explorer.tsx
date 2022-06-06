@@ -56,10 +56,20 @@ const Explorer = () => {
 
   const currentPath = useCallback(() => {
     // Manual parsing; /explorer <- 9 chars
-    return location.pathname.substring(9) ?? "/"
+    return location.pathname.substring(9)
   }, [location.pathname])
 
   const refreshPath = useCallback(() => {
+    // Check if the path url is valid first
+    if (
+      !currentPath() ||
+      currentPath()[0] !== "/" ||
+      currentPath()[currentPath().length - 1] !== "/"
+    ) {
+      navigate("/explorer/", { replace: true })
+      return
+    }
+
     let pathData: PathData = { folders: [], files: [] }
     const reqFolder: SearchFolderRequest = { file_path: currentPath() }
     const reqFile: SearchFileRequest = { name: "", ...reqFolder }
