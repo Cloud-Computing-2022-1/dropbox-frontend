@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios"
 import React, { useCallback, useState } from "react"
-import { Link } from "react-router-dom"
 import { SERVER_URL } from "../../constants"
 import { FileMeta } from "../../types/path"
 
@@ -52,11 +51,9 @@ const FileDetail = ({ file, refresher }: Props) => {
 
   const onClickRemove = useCallback(() => {
     if (file) {
-      axios
-        .delete(SERVER_URL + file.id.toString())
-        .then((res: AxiosResponse<ShareResponse>) => {
-          refresher()
-        })
+      axios.delete(SERVER_URL + file.id.toString()).then(() => {
+        refresher()
+      })
     }
   }, [file, refresher])
 
