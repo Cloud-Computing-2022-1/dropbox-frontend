@@ -55,8 +55,8 @@ const Explorer = () => {
   )
 
   const currentPath = useCallback(() => {
-    // Manual parsing; /explorer/ <- 10 chars
-    return location.pathname.substring(10)
+    // Manual parsing; /explorer <- 9 chars
+    return location.pathname.substring(9) ?? "/"
   }, [location.pathname])
 
   const refreshPath = useCallback(() => {
@@ -72,7 +72,7 @@ const Explorer = () => {
       .catch((err) => {
         console.log(err)
         // If current path is not exists, go to /root folder
-        navigate("root", { replace: true })
+        navigate("/explorer/", { replace: true })
       })
     axios
       .post(SERVER_URL + "search", reqFile)
@@ -83,7 +83,7 @@ const Explorer = () => {
       .catch((err) => {
         console.log(err)
         // Same above
-        navigate("root", { replace: true })
+        navigate("/explorer/", { replace: true })
       })
   }, [currentPath, navigate])
 
@@ -101,7 +101,7 @@ const Explorer = () => {
         {path.folders.map((folderMeta, i) => (
           <Link
             key={folderMeta + i.toString()}
-            to={currentPath() + "/" + folderMeta}
+            to={"/explorer" + currentPath() + folderMeta + "/"}
           >
             {folderMeta} (Folder)
           </Link>

@@ -66,7 +66,7 @@ const SearchedExplorer = () => {
     // If search query is not exists, go to /root folder
     if (newQuery === null) {
       console.log("query string is not defined.")
-      navigate("/explorer/root", { replace: true })
+      navigate("/explorer/", { replace: true })
     }
     // Some logic
     setQuery(newQuery)
