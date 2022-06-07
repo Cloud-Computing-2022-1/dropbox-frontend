@@ -80,6 +80,15 @@ const FileDetail = ({ close, file, refresher }: Props) => {
               </div>
             ) : null}
           </div>
+          {file.script ? (
+            <div>
+              "
+              {file.script.length > 20
+                ? file.script.substring(0, 20) + "..."
+                : file.script}
+              "
+            </div>
+          ) : null}
           <button onClick={onClickRemove}>Remove</button>
         </div>
       ) : null}

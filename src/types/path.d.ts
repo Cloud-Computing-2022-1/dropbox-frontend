@@ -6,6 +6,7 @@ export declare interface FileMeta {
   key: string
   upload_date: string
   file_path: string
+  script: string | null
 }
 
 export declare type FolderMeta = string

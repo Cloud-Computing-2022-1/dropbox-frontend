@@ -13,12 +13,25 @@ import {
   SearchFolderWithNameResponse,
 } from "../../types/path"
 
+interface ReplaceRequest {
+  file_ids: number[]
+  search: string
+  replace: string
+}
+
+interface ReplaceResponse {
+  result: FileMeta[]
+}
+
 const SearchedExplorer = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [query, setQuery] = useState<string | null>(null)
   const [path, setPath] = useState<PathData>({ folders: [], files: [] })
+  const [videos, setVideos] = useState<FileMeta[]>([])
   const [fileView, setFileView] = useState<FileMeta | null>(null)
+  const [stringBeReplaced, setStringBeReplaced] = useState("")
+  const [stringNew, setStringNew] = useState("")
 
   const handleFileView = useCallback(
     (fileMeta: FileMeta) => {
@@ -51,7 +64,7 @@ const SearchedExplorer = () => {
     if (query) {
       const reqFile: SearchFileRequest = { name: query, file_path: "" }
       axios
-        .get("folders/search/" + query.toString())
+        .get("folders/search/" + query)
         .then((res: AxiosResponse<SearchFolderWithNameResponse | string>) => {
           if (typeof res.data !== "string") {
             setPath((pathData) => {
@@ -80,8 +93,50 @@ const SearchedExplorer = () => {
         .catch((err) => {
           console.log(err)
         })
+      axios
+        .get("searchscript/" + query)
+        .then((res: AxiosResponse<SearchFileResponse | string>) => {
+          if (typeof res.data !== "string") {
+            setVideos(res.data.result)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }, [query])
+
+  const handleStringBeReplaced = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setStringBeReplaced(e.target.value)
+    },
+    []
+  )
+
+  const handleStringNew = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setStringNew(e.target.value)
+    },
+    []
+  )
+
+  const onClickReplace = useCallback(() => {
+    const req: ReplaceRequest = {
+      file_ids: videos.map((vid) => vid.id),
+      search: stringBeReplaced,
+      replace: stringNew,
+    }
+    axios
+      .patch("batch", req)
+      .then((res: AxiosResponse<ReplaceResponse>) => {
+        if (res.data.result) {
+          refreshPath()
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [refreshPath, stringBeReplaced, stringNew, videos])
 
   useEffect(refreshPath, [refreshPath])
 
@@ -92,6 +147,7 @@ const SearchedExplorer = () => {
       <ExplorerHeader />
       <div>Search result of '{query}'</div>
       <div className="FolderBox">
+        <div>Folders</div>
         {path.folders.map((folderMeta, i) => (
           <Link key={folderMeta + i.toString()} to={"/explorer" + folderMeta}>
             {folderMeta}
@@ -99,9 +155,34 @@ const SearchedExplorer = () => {
         ))}
       </div>
       <div className="FileBox">
+        <div>Files</div>
         {path.files.map((fileMeta, i) => (
           <button
             key={fileMeta.title + i.toString()}
+            onClick={() => handleFileView(fileMeta)}
+          >
+            {fileMeta.title}
+          </button>
+        ))}
+      </div>
+      <div className="VideoBox">
+        <div>Videos</div>
+        <div>
+          <input
+            type="text"
+            placeholder="String be repladced"
+            onChange={handleStringBeReplaced}
+          />
+          <input
+            type="text"
+            placeholder="New string"
+            onChange={handleStringNew}
+          />
+          <button onClick={onClickReplace}>Replace</button>
+        </div>
+        {videos.map((fileMeta, i) => (
+          <button
+            key={fileMeta.title + i.toString() + "video"}
             onClick={() => handleFileView(fileMeta)}
           >
             {fileMeta.title}
