@@ -130,6 +130,8 @@ const SearchedExplorer = () => {
       .patch("batch", req)
       .then((res: AxiosResponse<ReplaceResponse>) => {
         if (res.data.result) {
+          setStringBeReplaced("")
+          setStringNew("")
           refreshPath()
         }
       })
@@ -171,11 +173,13 @@ const SearchedExplorer = () => {
           <input
             type="text"
             placeholder="String be repladced"
+            value={stringBeReplaced}
             onChange={handleStringBeReplaced}
           />
           <input
             type="text"
             placeholder="New string"
+            value={stringNew}
             onChange={handleStringNew}
           />
           <button onClick={onClickReplace}>Replace</button>
