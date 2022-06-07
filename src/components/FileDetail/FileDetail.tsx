@@ -9,10 +9,11 @@ interface ShareResponse {
 
 interface Props {
   file: FileMeta | null
+  close: () => void
   refresher: () => void
 }
 
-const FileDetail = ({ file, refresher }: Props) => {
+const FileDetail = ({ close, file, refresher }: Props) => {
   const [duration, setDuration] = useState(1.0) // 1 hour
   const [shareUrl, setShareUrl] = useState<string | null>(null)
 
@@ -49,11 +50,12 @@ const FileDetail = ({ file, refresher }: Props) => {
 
   const onClickRemove = useCallback(() => {
     if (file) {
-      axios.delete(file.id.toString()).then(() => {
+      axios.delete("files/" + file.id.toString()).then(() => {
+        close()
         refresher()
       })
     }
-  }, [file, refresher])
+  }, [close, file, refresher])
 
   return (
     <div>

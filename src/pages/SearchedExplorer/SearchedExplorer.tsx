@@ -109,7 +109,11 @@ const SearchedExplorer = () => {
         ))}
       </div>
       <Modal isOpened={fileView !== null} close={() => setFileView(null)}>
-        <FileDetail file={fileView} refresher={refreshPath} />
+        <FileDetail
+          file={fileView}
+          close={() => setFileView(null)}
+          refresher={refreshPath}
+        />
       </Modal>
     </div>
   )
