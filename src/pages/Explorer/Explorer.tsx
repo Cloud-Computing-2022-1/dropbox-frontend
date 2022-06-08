@@ -1,10 +1,10 @@
+import { Button, Card, Modal } from "antd"
 import axios, { AxiosResponse } from "axios"
 import React, { useCallback, useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import ExplorerHeader from "../../components/ExplorerHeader/ExplorerHeader"
 import ExplorerToolbar from "../../components/ExplorerToolbar/ExplorerToolbar"
 import FileDetail from "../../components/FileDetail/FileDetail"
-import Modal from "../../components/Modal/Modal"
 import useInterval from "../../hooks/useInterval"
 import {
   FileMeta,
@@ -46,14 +46,21 @@ const Explorer = () => {
       return
     }
 
-    const reqFolder: SearchFolderRequest = { file_path: currentPath() }
+    const reqFolder: SearchFolderRequest = {
+      file_path: decodeURI(currentPath()),
+    }
     const reqFile: SearchFileRequest = { name: "", ...reqFolder }
     axios
       .post("searchfolderpath", reqFolder)
       .then((res: AxiosResponse<SearchFolderResponse | string>) => {
+        console.log(res)
         if (typeof res.data !== "string") {
           setPath((pathData) => {
             return { ...pathData, folders: res.data as SearchFolderResponse }
+          })
+        } else {
+          setPath((pathData) => {
+            return { ...pathData, folders: [] }
           })
         }
       })
@@ -72,6 +79,10 @@ const Explorer = () => {
               files: (res.data as SearchFileResponse).result,
             }
           })
+        } else {
+          setPath((pathData) => {
+            return { ...pathData, files: [] }
+          })
         }
       })
       .catch((err) => {
@@ -87,38 +98,81 @@ const Explorer = () => {
 
   return (
     <div>
-      <ExplorerHeader />
+      <ExplorerHeader currentPath={currentPath()} />
       <ExplorerToolbar currentPath={currentPath()} refresher={refreshPath} />
-      <div>{currentPath()}</div>
-      <div className="FolderBox">
-        <div>Folders</div>
-        {path.folders.map((folderMeta, i) => (
-          <Link
-            key={folderMeta + i.toString()}
-            to={"/explorer" + currentPath() + folderMeta + "/"}
+      <div style={{ margin: "auto" }}>
+        <div>
+          <Card
+            title="Folders"
+            style={{ margin: "2em 0 0 0", textAlign: "start" }}
           >
-            {folderMeta}
-          </Link>
-        ))}
-      </div>
-      <div className="FileBox">
-        <div>Files</div>
-        {path.files.map((fileMeta, i) => (
-          <button
-            key={fileMeta.title + i.toString()}
-            onClick={() => handleFileView(fileMeta)}
+            {path.folders.map((folderMeta, i) => (
+              <Card.Grid
+                key={folderMeta + i.toString() + currentPath()}
+                style={{
+                  width: `max(20%, 100%/${path.folders.length})`,
+                  textAlign: "center",
+                }}
+              >
+                <Link to={"/explorer" + currentPath() + folderMeta + "/"}>
+                  <div
+                    style={{
+                      width: "100%",
+                      margin: "auto",
+                      overflow: "hidden",
+                      color: "black",
+                    }}
+                  >
+                    {folderMeta}
+                  </div>
+                </Link>
+              </Card.Grid>
+            ))}
+          </Card>
+        </div>
+        <div>
+          <Card
+            title="Files"
+            style={{ margin: "2em 0 0 0", textAlign: "start" }}
           >
-            {fileMeta.title}
-          </button>
-        ))}
+            {path.files.map((fileMeta, i) => (
+              <Card.Grid
+                key={fileMeta + i.toString()}
+                style={{
+                  width: `max(20%, 100%/${path.files.length})`,
+                  textAlign: "center",
+                }}
+              >
+                <Button
+                  key={fileMeta.title + i.toString()}
+                  onClick={() => handleFileView(fileMeta)}
+                  type="text"
+                  style={{
+                    width: "100%",
+                    margin: "auto",
+                    background: "transparent",
+                    overflow: "hidden",
+                  }}
+                >
+                  {fileMeta.title}
+                </Button>
+              </Card.Grid>
+            ))}
+          </Card>
+        </div>
+        <Modal
+          title="File Detail"
+          visible={fileView !== null}
+          onCancel={() => setFileView(null)}
+          footer={null}
+        >
+          <FileDetail
+            file={fileView}
+            close={() => setFileView(null)}
+            refresher={refreshPath}
+          />
+        </Modal>
       </div>
-      <Modal isOpened={fileView !== null} close={() => setFileView(null)}>
-        <FileDetail
-          file={fileView}
-          close={() => setFileView(null)}
-          refresher={refreshPath}
-        />
-      </Modal>
     </div>
   )
 }

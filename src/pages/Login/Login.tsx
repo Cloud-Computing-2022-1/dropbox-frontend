@@ -1,3 +1,5 @@
+import { LoginOutlined, UserAddOutlined } from "@ant-design/icons"
+import { Button, Input, Typography } from "antd"
 import axios, { AxiosResponse } from "axios"
 import { sha256 } from "js-sha256"
 import React, { useCallback, useEffect, useState } from "react"
@@ -52,6 +54,7 @@ const Login = () => {
           }
         })
         .catch((err) => {
+          // To ignore blank error
           console.log(err)
         })
     }
@@ -73,22 +76,35 @@ const Login = () => {
   }, [navigate])
 
   return (
-    <div className="LoginBox">
-      <h2>Login</h2>
-      <input
+    <div style={{ width: "30%", margin: "3em auto" }}>
+      <Typography.Title level={2}>Login</Typography.Title>
+      <Input
         type="text"
         value={username}
         onChange={handleUsername}
         placeholder="Username"
+        required
       />
-      <input
+      <Input
         type="password"
         value={password}
         onChange={handlePassword}
         placeholder="Password"
+        required
+        style={{ margin: "1em 0" }}
       />
-      <button onClick={onClickLogin}>Login</button>
-      <Link to="/register">Register</Link>
+      <Button
+        onClick={onClickLogin}
+        icon={<LoginOutlined />}
+        style={{ width: "40%", margin: "0 0.5em 0 0" }}
+      >
+        Login
+      </Button>
+      <Link to="/register" style={{ width: "max-content" }}>
+        <Button icon={<UserAddOutlined />} style={{ width: "40%" }}>
+          Register
+        </Button>
+      </Link>
     </div>
   )
 }

@@ -1,8 +1,13 @@
+import {
+  DeleteOutlined,
+  FolderAddOutlined,
+  UploadOutlined,
+} from "@ant-design/icons"
+import { Button, Input, Modal } from "antd"
 import axios, { AxiosResponse } from "axios"
 import React, { useCallback, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { FileMeta } from "../../types/path"
-import Modal from "../Modal/Modal"
 
 type UploadRequest = FormData
 
@@ -44,13 +49,18 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
     []
   )
 
-  const onClickUpload = useCallback(() => {
-    if (!isUploading) {
-      setIsUploading(true)
-    }
-  }, [isUploading])
+  const onClickUpload = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      if (!isUploading && fileInputRef.current) {
+        setIsUploading(true)
+        fileInputRef.current.click()
+        e.currentTarget.blur()
+      }
+    },
+    [isUploading, fileInputRef]
+  )
 
-  const onClickSubmitUpload = useCallback(() => {
+  const handleFileInput = useCallback(() => {
     if (fileInputRef.current?.files && fileInputRef.current.files.length > 0) {
       const req: UploadRequest = new FormData()
       for (let i = 0; i < fileInputRef.current.files.length; i += 1) {
@@ -76,6 +86,7 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
         })
         .catch((err) => {
           console.log(err)
+          setIsUploading(false)
         })
     }
   }, [currentPath, refresher])
@@ -86,25 +97,27 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
     }
   }, [isCreatingFolder])
 
-  const onClickSubmitCreate = useCallback(() => {
+  const onClickSubmitCreate = useCallback(async () => {
     if (folderName !== "") {
       const req: CreateFolderRequest = {
         file_path: currentPath,
         name: folderName,
       }
-      axios
+      await axios
         .post("folders", req)
         .then((res: AxiosResponse<CreateFolderResponse>) => {
           if (!res.data?.id) {
             console.log("creating error occurs!")
           } else {
             refresher()
+            setFolderName("")
             setIsCreatingFolder(false)
           }
         })
         .catch((err) => {
           console.log(err)
         })
+      return false
     }
   }, [currentPath, refresher, folderName])
 
@@ -124,25 +137,43 @@ const ExplorerToolbar = ({ currentPath, refresher }: Props) => {
   }, [currentPath, navigate, refresher])
 
   return (
-    <div className="Toolbar">
-      <button onClick={onClickUpload}>Upload File</button>
-      <button onClick={onClickCreateFolder}>New Folder</button>
-      <button onClick={onClickRemoveFolder}>Remove Current Folder</button>
-      <Modal isOpened={isUploading} close={() => setIsUploading(false)}>
-        <input type="file" ref={fileInputRef} multiple />
-        <button onClick={onClickSubmitUpload}>Submit</button>
-      </Modal>
-      <Modal
-        isOpened={isCreatingFolder}
-        close={() => setIsCreatingFolder(false)}
-      >
+    <div style={{ margin: "auto" }}>
+      <div style={{ width: "max-content", margin: "0em 0em 0em auto" }}>
+        <Button onClick={onClickUpload} icon={<UploadOutlined />}>
+          Upload
+        </Button>
+        <Button
+          onClick={onClickCreateFolder}
+          icon={<FolderAddOutlined />}
+          style={{ margin: "0 1.25em" }}
+        >
+          New Folder
+        </Button>
+        <Button onClick={onClickRemoveFolder} icon={<DeleteOutlined />}>
+          Remove Current Folder
+        </Button>
         <input
-          type="text"
-          onChange={handleChangeFolderName}
-          placeholder="New folder's name"
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileInput}
+          multiple
+          style={{ display: "none" }}
         />
-        <button onClick={onClickSubmitCreate}>Submit</button>
-      </Modal>
+        <Modal
+          title="New Folder"
+          visible={isCreatingFolder}
+          onOk={onClickSubmitCreate}
+          onCancel={() => setIsCreatingFolder(false)}
+          okText="Submit"
+        >
+          <Input
+            type="text"
+            value={folderName}
+            onChange={handleChangeFolderName}
+            placeholder="New folder's name"
+          />
+        </Modal>
+      </div>
     </div>
   )
 }

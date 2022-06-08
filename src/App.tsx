@@ -9,7 +9,10 @@ import SearchedExplorer from "./pages/SearchedExplorer/SearchedExplorer"
 
 const App = () => {
   return (
-    <div className="App">
+    <div
+      className="App"
+      style={{ width: "78%", height: "100%", margin: "auto" }}
+    >
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />

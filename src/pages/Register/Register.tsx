@@ -1,8 +1,9 @@
+import { RollbackOutlined, UserAddOutlined } from "@ant-design/icons"
+import { Button, Input, Modal, Typography } from "antd"
 import axios, { AxiosResponse } from "axios"
 import { sha256 } from "js-sha256"
 import React, { useCallback, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import Modal from "../../components/Modal/Modal"
 
 interface RegisterRequest {
   username: string
@@ -66,31 +67,50 @@ const Register = () => {
   }, [email, username, password])
 
   return (
-    <div className="RegisterBox">
-      <h2>Register</h2>
-      <input
+    <div style={{ width: "30%", margin: "3em auto" }}>
+      <Typography.Title level={2}>Register</Typography.Title>
+      <Input
         type="email"
         value={email}
         onChange={handleEmail}
         placeholder="Email"
+        required
       />
-      <input
+      <Input
         type="text"
         value={username}
         onChange={handleUsername}
         placeholder="Username"
+        required
+        style={{ margin: "1em 0" }}
       />
-      <input
+      <Input
         type="password"
         value={password}
         onChange={handlePassword}
         placeholder="Password"
+        required
+        style={{ margin: "0 0 1em" }}
       />
-      <button onClick={onClickRegister}>Register</button>
-      <Link to="/login">Back to the Login</Link>
-      <Modal isOpened={isModalOpened} close={closeModal}>
-        <div>Success!</div>
-        <div>Go back to the login page</div>
+      <Button
+        onClick={onClickRegister}
+        icon={<UserAddOutlined />}
+        style={{ width: "40%", margin: "0 0.5em 0 0" }}
+      >
+        Register
+      </Button>
+      <Link to="/login" style={{ width: "max-content" }}>
+        <Button icon={<RollbackOutlined />} style={{ width: "40%" }}>
+          Get Back
+        </Button>
+      </Link>
+      <Modal
+        title="Register"
+        visible={isModalOpened}
+        onCancel={closeModal}
+        footer={null}
+      >
+        <Typography.Text>Success! Go back to the login page.</Typography.Text>
       </Modal>
     </div>
   )
